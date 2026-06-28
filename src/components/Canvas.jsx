@@ -1,7 +1,7 @@
 import React from 'react'
 import useSound from 'use-sound'
 import CircuitBox from '../tools/CircuitBox'
-import eggMan from '../assets/eggman.png'
+import eggMan from '../assets/eggMan.png'
 
 const Canvas = ({  circuit, setCircuit,removeGate }) => {
     return (
