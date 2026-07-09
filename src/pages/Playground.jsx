@@ -40,7 +40,6 @@ const Playground = () => {
     }
 
     const toggleQubitsAdjust = () => {
-        console.log("Toggling Qubits Adjust Box. Current state:", qubitsAdjustOpen);
         setQubitsAdjustOpen(!qubitsAdjustOpen);
     }
 
@@ -94,7 +93,6 @@ const Playground = () => {
         }
 
         setCircuit(oldCircuit);
-        console.log("Old Circuit:", oldCircuit);
     }
 
     const removeCircuitNode = () => {
@@ -182,7 +180,7 @@ const Sidebar = ({ buttons }) => {
 
 const QubitsAdjustSection = ({ qCount, nCount, isOpen, onClose, addQubit, removeQubit, addNode, removeNode }) => {
     return (
-        <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end select-none pointer-events-none">
+        <div className="fixed bottom-6 right-6 z-9999 flex flex-col items-end select-none pointer-events-none">
 
             {isOpen && (
                 <div

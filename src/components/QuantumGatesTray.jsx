@@ -10,7 +10,6 @@ const QuantumGatesTray = () => {
     const [inspectedGate, setInspectedGate] = useState(null);
 
     const gateClicked = (e, gateId) => {
-        console.log(`Gate clicked: ${gateId}`);
         const gate = gates.find((g) => g.id === gateId);
         setInspectedGate(gate);
     }
@@ -22,10 +21,10 @@ const QuantumGatesTray = () => {
 
     return (
        <>
-        <div className="fixed top-4 left-4 sm:top-8 sm:left-8 z-[9999] flex flex-row items-center gap-2.5 sm:gap-3 select-none pointer-events-none">
+        <div className="fixed top-4 left-4 sm:top-8 sm:left-8 z-9999 flex flex-row items-center gap-2.5 sm:gap-3 select-none pointer-events-none">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="pointer-events-auto group p-2 bg-[#FFF275] border-4 border-black text-black select-none rounded-[15px_50px_20px_45px/45px_20px_50px_15px] -rotate-1 hover:rotate-0 transition-all duration-300 shadow-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all duration-150 overflow-hidden cursor-pointer"
+                className="pointer-events-auto group p-2 bg-[#FFF275] border-4 border-black text-black select-none rounded-[15px_50px_20px_45px/45px_20px_50px_15px] -rotate-1 hover:rotate-0 shadow-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all duration-150 overflow-hidden cursor-pointer"
             >
                 <img
                     src={isOpen ? imgClose : imgOpen}

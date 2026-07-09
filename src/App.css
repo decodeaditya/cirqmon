@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "tailwindcss/utilities";
 
-*{
-    font-family: 'Google Sans', sans-serif;
+
+* {
+    font-family: "Stack Sans Headline", sans-serif;
+}
+
+h1 span,h1 {
+   font-family: "Galindo", sans-serif;
 }

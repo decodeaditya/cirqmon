@@ -29,7 +29,7 @@ const QubitsAdjust = ({ qCount, nCount, addQubit, removeQubit, addNode, removeNo
 
                     <button
                         onClick={() => addQubit()}
-                        disabled={qCount >= 6}
+                        disabled={qCount >= 5}
                         className="w-11 h-11 bg-[#00E599] text-black font-black text-xl rounded-xl border-3 border-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-40 disabled:grayscale disabled:shadow-none disabled:cursor-not-allowed"
                     >
                         +
@@ -44,7 +44,7 @@ const QubitsAdjust = ({ qCount, nCount, addQubit, removeQubit, addNode, removeNo
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => removeNode()}
-                        disabled={nCount <= 1}
+                        disabled={nCount <= 4}
                         className="w-11 h-11 bg-[#FF5757] text-white font-black text-xl rounded-xl border-3 border-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-40 disabled:grayscale disabled:shadow-none disabled:cursor-not-allowed"
                     >
                         -
@@ -56,7 +56,7 @@ const QubitsAdjust = ({ qCount, nCount, addQubit, removeQubit, addNode, removeNo
 
                     <button
                         onClick={() => addNode()}
-                        disabled={nCount >= 8}
+                        disabled={nCount >= 6}
                         className="w-11 h-11 bg-[#38B6FF] text-black font-black text-xl rounded-xl border-3 border-black shadow-[3px_3px_0px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all cursor-pointer disabled:opacity-40 disabled:grayscale disabled:shadow-none disabled:cursor-not-allowed"
                     >
                         +

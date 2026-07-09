@@ -20,7 +20,7 @@ const CircuitBox = ({ circuit, setCircuit, removeGate }) => {
             {Object.keys(circuit).map((qubitId) => (
                 <div key={qubitId} className="relative flex items-center gap-4 sm:gap-6">
 
-                    {/* Qubit */}
+                    {/* It's Qubit Box*/}
                     <div className="relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 bg-white border-4 border-black rounded-3xl flex flex-col items-center mr-4 justify-center shadow-[4px_4px_0px_0px_#000]">
                         <span className="absolute -top-2.5 px-2 py-0.5 font-mono text-[9px] font-black bg-black text-white rounded-full">
                             Q_{qubitId}
@@ -28,7 +28,7 @@ const CircuitBox = ({ circuit, setCircuit, removeGate }) => {
                         <span className="font-black text-2xl sm:text-3xl text-black">|0⟩</span>
                     </div>
 
-                    {/* Circuit Line */}
+                    {/* Wire */}
                     <div className="relative flex-1 flex items-center justify-between gap-2 sm:gap-4 h-20">
                         <div className="absolute left-0 right-0 border-b-4 border-dashed border-black/40 -z-10" />
 
@@ -44,7 +44,7 @@ const CircuitBox = ({ circuit, setCircuit, removeGate }) => {
                                         w-14 h-14 sm:w-16 sm:h-16 rounded-2xl cursor-pointer flex items-center justify-center border-3 sm:border-4 border-black
                                         ${placedGateId 
                                             ? `${gateData?.bg} ${gateData?.text} shadow-[4px_4px_0px_0px_#000]` 
-                                            : 'bg-black/[0.03] border-dashed border-black/30'
+                                            : 'bg-black/3 border-dashed border-black/30'
                                         }
                                     `}>
 

@@ -2,6 +2,7 @@ import React from 'react'
 import useSound from 'use-sound'
 import CircuitBox from '../tools/CircuitBox'
 import eggMan from '../assets/eggMan.png'
+import ExecuteCircuit from '../tools/ExecuteCircuit'
 
 const Canvas = ({  circuit, setCircuit,removeGate }) => {
     return (
@@ -14,6 +15,7 @@ const Canvas = ({  circuit, setCircuit,removeGate }) => {
                 <CircuitBox height={"full"} width={"full"} circuit={circuit} setCircuit={setCircuit} removeGate={removeGate}/>
 
             </div>
+            <ExecuteCircuit circuit={circuit}/>
         </>
     )
 }
