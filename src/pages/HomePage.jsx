@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import bg from '../assets/bg.jpg'
+import { Link } from 'react-router-dom';
 
 export default function Homepage() {
 
     const blogs = [
-        { title: "Example Title", color: "bg-[#FF6B6B]", shadow: "#8B0000",desc: "Blog More Info...", date:"12/10/26" },
-        { title: "Example Title", color: "bg-[#FF6B6B]", shadow: "#8B0000",desc: "Blog More Info...", date:"12/10/26" },
-        { title: "Example Title", color: "bg-[#FF6B6B]", shadow: "#8B0000",desc: "Blog More Info...", date:"12/10/26" }
+        { title: "Example Title", color: "bg-[#FF6B6B]", shadow: "#8B0000", desc: "Blog More Info...", date: "12/10/26" },
+        { title: "Example Title", color: "bg-[#FF6B6B]", shadow: "#8B0000", desc: "Blog More Info...", date: "12/10/26" },
+        { title: "Example Title", color: "bg-[#FF6B6B]", shadow: "#8B0000", desc: "Blog More Info...", date: "12/10/26" }
     ];
 
     return (
@@ -25,17 +26,19 @@ export default function Homepage() {
 
                 <div className="flex gap-4 sm:gap-6 items-center">
                     <div className="hidden sm:flex gap-3 mr-2">
-                            <a href="#" className="bg-white rounded-xl px-4 py-2 font-black text-slate-900 transition-all duration-150 shadow-[0_4px_0_0_#cbd5e1,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#cbd5e1,0_8px_0_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_0_#cbd5e1,0_0px_0_0_#0f172a]">
-                                Blog
-                            </a>
-                            <a href="#" className="bg-white rounded-xl px-4 py-2 font-black text-slate-900 transition-all duration-150 shadow-[0_4px_0_0_#cbd5e1,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#cbd5e1,0_8px_0_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_0_#cbd5e1,0_0px_0_0_#0f172a]">
-                                Github
-                            </a>
+                        <a href="#" className="bg-white rounded-xl px-4 py-2 font-black text-slate-900 transition-all duration-150 shadow-[0_4px_0_0_#cbd5e1,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#cbd5e1,0_8px_0_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_0_#cbd5e1,0_0px_0_0_#0f172a]">
+                            Blog
+                        </a>
+                        <a href="#" className="bg-white rounded-xl px-4 py-2 font-black text-slate-900 transition-all duration-150 shadow-[0_4px_0_0_#cbd5e1,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#cbd5e1,0_8px_0_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_0_#cbd5e1,0_0px_0_0_#0f172a]">
+                            Github
+                        </a>
                     </div>
 
-                    <button className="bg-[#4BCFFA] text-slate-900 rounded-xl px-6 py-2.5 font-black text-sm sm:text-base flex items-center gap-2 transition-all duration-150 shadow-[0_4px_0_0_#008B8B,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#008B8B,0_8px_0_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_0_#008B8B,0_0px_0_0_#0f172a]">
-                        Go to Builder
-                    </button>
+                    <Link to="/playground/">
+                        <button className="bg-blue-300 text-slate-900 rounded-xl px-6 py-2.5 font-black text-sm sm:text-base flex items-center gap-2 transition-all duration-150 shadow-[0_4px_0_0_#008B8B,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#008B8B,0_8px_0_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_0_#008B8B,0_0px_0_0_#0f172a] cursor-pointer">
+                            Go to Builder
+                        </button>
+                    </Link>
                 </div>
             </nav>
 
@@ -47,7 +50,7 @@ export default function Homepage() {
                 >
 
                     <div className="relative z-20 py-10 px-6 sm:py-3 sm:px-12 max-w-4xl mx-auto flex flex-col items-center">
-                       
+
 
                         <h1 className="text-6xl sm:text-7xl md:text-8xl text-yellow-400 tracking-wide font-black drop-shadow-[0_4px_6px_rgba(0,0,0,0.7)] leading-[1.05] mb-6 " >
                             QUANTUM
@@ -58,7 +61,7 @@ export default function Homepage() {
                             Drag, drop and Measure. A cartoonish Quantum Computing tool that makes circuit building feel like an enjoyble game, not a Burden :)
                         </p>
 
-                         <div className="bg-slate-900 text-white font-mono font-bold text-sm sm:text-base px-4 py-2 border-2 border-slate-700 shadow-md mb-8 inline-block">
+                        <div className="bg-slate-900 text-white font-mono font-bold text-sm sm:text-base px-4 py-2 border-2 border-slate-700 shadow-md mb-8 inline-block">
                             and, Yeah It's Open Source too!
                         </div>
                     </div>
@@ -106,7 +109,7 @@ export default function Homepage() {
                             href="#"
 
                             className={`group backdrop-blur-3xl hover: rounded-tl-3xl rounded-br-3xl shadow-[rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px] p-6 sm:p-8 flex flex-col justify-between transition-all duration-150 border-amber-50 border-4`}
-                        
+
                         >
                             <div>
                                 <div className="flex justify-between items-start mb-6">
@@ -123,11 +126,11 @@ export default function Homepage() {
                                 </h3>
 
                                 <p className="text-white/90 font-bold text-sm leading-relaxed drop-shadow-sm line-clamp-2">
-                                   {blog.desc}
+                                    {blog.desc}
                                 </p>
                             </div>
 
-                          
+
                             <div className="mt-8 bg-white text-slate-900 px-6 py-4 rounded-2xl font-black text-sm shadow-[0_4px_0_0_#0f172a] transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-[0_6px_0_0_#0f172a] active:translate-y-1 active:shadow-none">
                                 Read Blog
                             </div>

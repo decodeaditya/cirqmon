@@ -1,3 +1,5 @@
+// Demo info by AI (Needs to update in next version)
+
 const gates = [
   {
     id: 'h',
