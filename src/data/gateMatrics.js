@@ -1,0 +1,51 @@
+// [a,b] here a is real and b is imaginary number, imaginary is needed because its for phase and interferences
+
+// IDEA is simple, you merge the gates with actually are matrics using tensors and then you just step by step multiplies by state vector and tensor of each step; Will write blog on this
+// will optimise for multi Qubits
+
+const zero = [1, 0];
+const one = [0, 0];
+
+const gateMatrics = {
+
+    // its for single Qubits for now.
+
+    H: [
+        [[1 / Math.sqrt(2), 0], [1 / Math.sqrt(2), 0]],
+        [[1 / Math.sqrt(2), 0], [-1 / Math.sqrt(2), 0]]
+    ],
+
+    X: [
+        [[0, 0], [1, 0]],
+        [[1, 0], [0, 0]]
+    ],
+
+    Y: [
+        [[0, 0], [0, -1]],
+        [[0, 1], [0, 0]]
+    ],
+
+    Z: [
+        [[1, 0], [0, 0]],
+        [[0, 0], [-1, 0]]
+    ],
+
+    S: [
+        [[1, 0], [0, 0]],
+        [[0, 0], [0, 1]]
+    ],
+
+    T: [
+        [[1, 0], [0, 0]],
+        [[0, 0], [1 / Math.sqrt(2), 1 / Math.sqrt(2)]]
+    ]
+    ,
+    I: [
+        [[1, 0], [0, 0]],
+        [[0, 0], [1, 0]]
+    ]
+};
+
+
+export default gateMatrics;
+

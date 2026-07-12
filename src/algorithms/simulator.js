@@ -1,51 +1,4 @@
-// [a,b] here a is real and b is imaginary number, imaginary is needed because its for phase and interferences
-
-// IDEA is simple, you merge the gates with actually are matrics using tensors and then you just step by step multiplies by state vector and tensor of each step; Will write blog on this
-// will optimise for multi Qubits
-
-const zero = [1, 0];
-const one = [0, 0];
-
-const gateMatrics = {
-
-    // its for single Qubits for now.
-
-    H: [
-        [[1 / Math.sqrt(2), 0], [1 / Math.sqrt(2), 0]],
-        [[1 / Math.sqrt(2), 0], [-1 / Math.sqrt(2), 0]]
-    ],
-
-    X: [
-        [[0, 0], [1, 0]],
-        [[1, 0], [0, 0]]
-    ],
-
-    Y: [
-        [[0, 0], [0, -1]],
-        [[0, 1], [0, 0]]
-    ],
-
-    Z: [
-        [[1, 0], [0, 0]],
-        [[0, 0], [-1, 0]]
-    ],
-
-    S: [
-        [[1, 0], [0, 0]],
-        [[0, 0], [0, 1]]
-    ],
-
-    T: [
-        [[1, 0], [0, 0]],
-        [[0, 0], [1 / Math.sqrt(2), 1 / Math.sqrt(2)]]
-    ]
-    ,
-    I: [
-        [[1, 0], [0, 0]],
-        [[0, 0], [1, 0]]
-    ]
-};
-
+import gateMatrics from "../data/gateMatrics.js";
 
 function initializeStateVector(numQubits) {
 
@@ -96,15 +49,22 @@ const tensorProduct = (matrixA, matrixB) => {
 
 // this one implements the tensor function step by step if no gate it assumes Identity gate
 
-const buildStepMatrix = (noOfQubits, allGatesInStep) => {
-    const initialGate = allGatesInStep[0] || 'I';
+
+const buildStepMatrix = (noOfQubits, allGatesInStep, bigEndian) => {
+
+    const initialGate = allGatesInStep[ bigEndian ? 0 : noOfQubits - 1 ] || 'I';
     let runningStepMatrix = gateMatrics[initialGate.toUpperCase()];
 
     for (let i = 1; i < noOfQubits; i++) {
-        const gateType = allGatesInStep[i] || 'I';
+
+        const targetIndex = bigEndian ? i : noOfQubits - 1 - i;
+        const gateType = allGatesInStep[targetIndex] || 'I';
+
         const currentGateMatrix = gateMatrics[gateType.toUpperCase()];
         runningStepMatrix = tensorProduct(runningStepMatrix, currentGateMatrix);
+
     }
+
     return runningStepMatrix;
 }
 
@@ -123,7 +83,7 @@ const multiplyMatrixVector = (matrix, vector) => {
             const product = calcCompNum(matrix[i][j], vector[j]);
             sum = [sum[0] + product[0], sum[1] + product[1]];
         }
-        
+
         newVector[i] = sum;
     }
     return newVector;
@@ -131,7 +91,7 @@ const multiplyMatrixVector = (matrix, vector) => {
 
 // final function
 
-const runSimulator = (numQubits, rawCircuit) => {
+const runSimulator = (numQubits, rawCircuit, bigEndian) => {
     let stateVector = initializeStateVector(numQubits);
 
     if (rawCircuit.length === 0) return stateVector;
@@ -142,7 +102,7 @@ const runSimulator = (numQubits, rawCircuit) => {
         const gatesInThisStep = {};
         rawCircuit.filter(c => c.step === step).forEach(c => { gatesInThisStep[c.target] = c.gate; });
 
-        const stepMatrix = buildStepMatrix(numQubits, gatesInThisStep);
+        const stepMatrix = buildStepMatrix(numQubits, gatesInThisStep, bigEndian);
         stateVector = multiplyMatrixVector(stepMatrix, stateVector);
     }
 
@@ -150,4 +110,3 @@ const runSimulator = (numQubits, rawCircuit) => {
 }
 
 export default runSimulator;
-

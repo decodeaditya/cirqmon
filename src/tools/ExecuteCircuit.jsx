@@ -1,14 +1,21 @@
-import React, { useState } from 'react'
-import runSimulator from '../variables/gateMatrics'
+import React, { useEffect, useRef, useState } from 'react'
+import runSimulator from '../algorithms/simulator'
+import Tooltip from '../components/Tooltip'
+import alienFace from '../assets/icons/alienFace.webp'
+import { Line, OrbitControls, Sphere } from '@react-three/drei'
+import { Canvas } from '@react-three/fiber'
 
-const ExecuteCircuit = ({ circuit, qiskitCode, results }) => {
+const ExecuteCircuit = ({ circuit }) => {
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const isBigEndian = true;
 
     const circuitInstructions = []
-    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const [pythonCode, setCode] = useState("#nothing in console")
-
     const [states, setStates] = useState([])
+
+    const stateVector = []
 
     const executeButtonClicked = async () => {
 
@@ -26,42 +33,45 @@ const ExecuteCircuit = ({ circuit, qiskitCode, results }) => {
             })
         })
 
+        // qiskit code (may be later i will add import openqasm instead)
+
         const code = `from qiskit import QuantumCircuit
-                    from qiskit.primitives import StatevectorSampler
+from qiskit.primitives import StatevectorSampler
 
-                    # 1. Create a Quantum Circuit with ${maxQubit} qubit
-                    qc = QuantumCircuit(${maxQubit})
+# 1. Create a Quantum Circuit with ${maxQubit} qubit
+qc = QuantumCircuit(${maxQubit})
+${circuitInstructions.map(item => `qc.${item.gate}(${item.target})`).join('\n')}
 
-                    ${circuitInstructions.map(item => `qc.${item.gate}(${item.target})`).join('\n')}
+# 3. Measure the qubit and store the result
+qc.measure_all()
 
-                    # 3. Measure the qubit and store the result
-                    qc.measure_all()
+ # 4. Simulate the circuit
+sampler = StatevectorSampler()
+job = sampler.run([qc], shots=1024)
+result = job.result()
+pub_result = result[0]
 
-                    # 4. Simulate the circuit
-                    sampler = StatevectorSampler()
-                    job = sampler.run([qc], shots=1024)
-                    result = job.result()
-                    pub_result = result[0]
-
-                    print("Measurement Counts:", pub_result.data.meas.get_counts())
+print("Measurement Counts:", pub_result.data.meas.get_counts())
                     `
 
-        const statevector = runSimulator(maxQubit, circuitInstructions)
+        const statevector = await runSimulator(maxQubit, circuitInstructions, isBigEndian)
+        stateVector.push(...statevector)
 
         const tempState = []
 
         statevector.forEach((amplitude, index) => {
+
+            // using for formula probability = |a|^2 + |b|^2 where a and b are the real and imaginary respectively
             const probability = Math.pow(amplitude[0], 2) + Math.pow(amplitude[1], 2);
 
             tempState.push([
-                index.toString(2).padStart(maxQubit, '0'),
+                index.toString(2).slice().padStart(maxQubit, '0'),
                 probability.toFixed(2)
             ])
 
         })
 
         setStates(tempState)
-
         setCode(code)
 
         setIsModalOpen(!isModalOpen)
@@ -71,8 +81,15 @@ const ExecuteCircuit = ({ circuit, qiskitCode, results }) => {
 
     return (
         <div className="absolute bottom-8 right-10">
-            <ExecuteButton whenClicked={executeButtonClicked} />
-            {isModalOpen && <ExecuteModal sortedStates={states} isOpen={isModalOpen} onClose={() => setIsModalOpen(!isModalOpen)} qiskitCode={pythonCode} />}
+
+            <Tooltip text="Execute Circuit" isRight={false}>
+                <ExecuteButton whenClicked={executeButtonClicked} />
+            </Tooltip>
+
+            {isModalOpen &&
+                <ExecuteModal sortedStates={states} isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(!isModalOpen)} qiskitCode={pythonCode} stateVector={stateVector} />
+            }
 
         </div>
     )
@@ -80,42 +97,26 @@ const ExecuteCircuit = ({ circuit, qiskitCode, results }) => {
 
 const ExecuteButton = ({ whenClicked }) => {
 
-    const isExecuting = false
-
     return (
-
         <button
             onClick={whenClicked}
             className="cursor-pointer disabled:cursor-not-allowed select-none border-none bg-transparent p-0"
         >
-            <div className="w-20 h-20 bg-blue-50 rounded-full relative shadow-[inset_0px_0px_1px_1px_rgba(0,0,0,0.3),2px_3px_5px_rgba(0,0,0,0.1)] flex items-center justify-center">
-                <div className="absolute w-18 h-18 z-10 bg-black rounded-full left-1/2 -translate-x-1/2 top-2 blur-[1px]"></div>
+            <div className="w-30 h-30 bg-slate-600 rounded-full relative shadow-md/100 transition-all
+             duration-200 flex items-center justify-center  hover:-rotate-360 hover:scale-50">
 
-                <div className={`
-          group absolute w-18h-18 rounded-full left-1/2 -translate-x-1/2 top- z-20 flex items-center justify-center transition-all duration-150
-          shadow-[inset_0px_4px_2px_#60a5fa,inset_0px_-4px_0px_#1e3a8a,0px_0px_2px_rgba(0,0,0,1)]
-                    'bg-gradient-to-b from-blue-600 to-blue-400 active:shadow-[inset_0px_4px_2px_rgba(96,165,250,0.5),inset_0px_-4px_2px_rgba(37,99,235,0.5),0px_0px_2px_rgba(0,0,0,1)] active:translate-y-1.6
-                    
-        `}>
-                    <div className="w-8 group-active:w-8 fill-blue-100 drop-shadow-[0px_2px_2px_rgba(0,0,0,0.5)] flex items-center justify-center">
-                        {isExecuting ? (
-                            <svg className="animate-spin w-8 h-8 text-blue-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        ) : (
-                            <svg className="w-8 h-8 ml-1" xmlns="http://www.w3.org/2000/svg" id="Filled" viewBox="0 0 24 24">
-                                <path d="M20.492,7.969,10.954.975A5,5,0,0,0,3,5.005V19a4.994,4.994,0,0,0,7.954,4.03l9.538-6.994a5,5,0,0,0,0-8.062Z"></path>
-                            </svg>
-                        )}
+                <div className={` group absolute rounded-2xl left-1/2 -translate-x-1/2 top- z-20 flex items-center justify-center`}>
+                    <div className="w-20 fill-blue-100 drop-shadow-[0px_2px_2px_rgba(0,0,0,0.5)] flex items-center justify-center p-1">
+                        <img src={alienFace} alt="Execute Button" />
                     </div>
                 </div>
+
             </div>
         </button>
     )
 }
 
-const ExecuteModal = ({ isOpen, onClose, qiskitCode, sortedStates }) => {
+const ExecuteModal = ({ isOpen, onClose, qiskitCode, sortedStates, stateVector }) => {
 
     const [copied, setCopied] = useState(false)
 
@@ -125,94 +126,207 @@ const ExecuteModal = ({ isOpen, onClose, qiskitCode, sortedStates }) => {
         setTimeout(() => setCopied(false), 2000);
     }
 
+    const yLabels = [100, 75, 50, 25, 0]
+    const activeStateCount = sortedStates.filter(([_, prob]) => prob > 0).length
+
+    const [showQSphere, setQSphere] = useState(true)
+
     return (
-        <div style={{ top: isOpen ? "-100" : "0" }} className="fixed inset-0 z-99999 bg-black/60 flex backdrop-blur-sm items-center justify-center p-4 sm:p-6 select-none animate-in fade-in duration-150 h-full">
+        <div style={{ top: isOpen ? "-100" : "0" }} className="fixed inset-0 z-99999 bg-black/90 flex backdrop-blur-sm 
+        items-center justify-center select-none animate-in fade-in duration-150 h-full">
 
-            <div className='bg-[#FFF8F0] border-4 border-black rounded-3xl shadow-[12px_12px_0px_0px_#000] w-full h-full flex flex-col overflow-hidden'>
-                <div className="flex items-center justify-between border-b-4 border-black px-6 py-4 bg-[#51a1c4]">
+            <div className='w-full h-full flex flex-col overflow-hidden'>
 
+                <div className="flex items-center justify-between px-6 py-4">
                     <div className="flex items-center gap-2.5">
-                        <h2 className="font-black text-xl tracking-tight text-black">Circuit Run Results</h2>
+                        <h2 className="font-black text-xl tracking-tight text-white uppercase">Circuit Results and Code</h2>
                     </div>
 
-                    <button
-                        onClick={onClose}
-                        className="w-10 h-10 bg-white border-3 border-black rounded-xl font-black text-lg hover:bg-yellow-500 active:translate-x-0.5 active:translate-y-0.5 shadow-[2px_2px_0px_0px_#000] active:shadow-none transition-all flex items-center justify-center cursor-pointer"
-                    >
-                        ✕
+                    <button onClick={onClose} className="bg-slate-300 text-slate-900 rounded-xl p-2 font-black text-sm sm:text-base flex items-center
+                     gap-2 transition-all duration-150 shadow-md/100 hover:scale-95 active:shadow-[0_0px_0_0_#008B8B,0_0px_0_0_#0f172a] cursor-pointer">
+                        Back
                     </button>
                 </div>
 
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 divide-y-4 lg:divide-y-0 lg:divide-x-4 divide-black overflow-y-auto flex-1">
+                <div className="grid grid-cols-1 lg:grid-cols-2 overflow-y-auto flex-1">
 
-                    {/* Code Half */}
-                    <div className="p-6 flex flex-col gap-3 bg-[#18181B] text-white">
-                        <div className="flex justify-between items-center">
-                            <span className="font-mono text-xs font-bold text-gray-400 uppercase">Qiskit Program</span>
-                            <button
-                                onClick={copyCode}
-                                className="px-3 py-1 bg-[#27272A] hover:bg-[#3F3F46] border border-gray-600 rounded text-xs font-mono font-bold transition-colors cursor-pointer text-white"
+                    {/* Code and Sphere Part  */}
+                    <div className="p-6 flex flex-col gap-3 bg-indigo-200 text-white m-2 rounded-2xl">
+
+                        <div className="flex justify-between items-center border-b-2 border-black/10 pb-2">
+
+                            <span className="font-mono text-xs font-bold text-gray-900 uppercase ">{showQSphere ? "Q Sphere Visualization" : "Qiskit Code"}</span>
+
+                            <div>
+
+                                {!showQSphere &&
+                                    <button
+                                        onClick={copyCode}
+                                        className="px-3 py-1 bg-black/80 rounded-2xl hover:bg-[#3F3F46] border border-gray-600 text-xs font-mono font-bold 
+                                transition-colors cursor-pointer text-white"
+                                    >
+                                        {copied ? 'COPIED!' : 'COPY CODE'}
+                                    </button>
+                                }
+                                <button className='bg-black/70 px-3 py-1 rounded-3xl border border-black/10 text-xs backdrop-blur-3xl cursor-pointer ml-2 font-bold' onClick={() => { setQSphere(!showQSphere) }}>
+                                    {showQSphere ? "Circuit Code" : 'Show Q Sphere'}
+                                </button>
+
+                            </div>
+
+
+
+                        </div>
+
+                        {showQSphere ? <QSphere /> :
+
+                            <div className="flex-1 bg-black/90 p-5 rounded-3xl border border-neutral-800/60 codePart text-sm text-green-400
+                        overflow-x-auto overflow-y-auto whitespace-pre leading-relaxed select-text max-h-120 shadow-[inset_0_4px_12px_rgba(0,0,0,0.9),0_8px_24px_-4px_rgba(0,0,0,0.7),0_2px_4px_rgba(255,255,255,0.03)] backdrop-blur-md"
+                                style={{
+                                    scrollbarWidth: 'thin',
+                                    scrollbarColor: '#404040 transparent'
+                                }}
                             >
-                                {copied ? 'COPIED!' : 'COPY SCRIPT'}
-                            </button>
-                        </div>
 
-                        <div className="flex-1 bg-black p-4 rounded-xl border border-gray-800 font-mono text-sm text-[#00E599] overflow-x-auto overflow-y-auto whitespace-pre leading-relaxed select-text max-h-120">
-                            {qiskitCode || "# No instructions mapped"}
-                        </div>
+                                {qiskitCode || "# start building to see code"}
+
+                            </div>
+                        }
+
+
                     </div>
 
-                    {/* Graph Part */}
-                    <div className="p-6 flex flex-col gap-4 bg-white">
+                    {/* Result Part */}
+                    <div className="p-6 flex flex-col gap-4 bg-blue-200 text-white m-2 rounded-2xl">
+
                         <div className="flex justify-between items-end border-b-2 border-black/10 pb-2">
-                            <span className="font-black text-sm uppercase text-black">What actually happened</span>
-                            <span className="font-mono text-xs font-bold text-gray-500"> Active States</span>
+                            <span className="font-black text-sm uppercase text-black">Probability of Qutbit States</span>
+                            <span className="font-mono text-xs font-bold text-gray-800">{activeStateCount} Active State{activeStateCount !== 1 ? 's' : ''}</span>
                         </div>
 
-                        <div className="flex flex-col gap-3.5 overflow-y-auto max-h-106 pr-1">
-                            {sortedStates.length === 0 ? (
-                                <div className="text-gray-400 font-mono text-sm py-12 text-center">Zero states measured.</div>
-                            ) : (
-                                sortedStates.map(([state, prob]) => {
-                                    const pct = (prob * 100).toFixed(1);
-                                    return (
-                                        <div key={state} className="flex flex-col gap-1 font-mono">
-                                            <div className="flex justify-between text-xs font-black text-black">
-                                                <span className="bg-black text-white px-2 py-0.5 rounded tracking-widest">|{state}⟩</span>
-                                                <span>{pct}% <span className="text-gray-400 font-normal">({prob})</span></span>
-                                            </div>
+                        {/* Histogram  */}
+                        <div className="relative w-full h-100 bg-white/40 backdrop-blur-3xl rounded-4xl p-6 flex gap-4 shadow-sm border border-white/40">
 
-                                            <div className="w-full bg-gray-100 h-6 rounded-lg border-2 border-black p-0.5 overflow-hidden flex items-center">
-                                                <div
-                                                    className="bg-[#FF90E8] h-full rounded border border-black transition-all duration-500 ease-out"
-                                                    style={{ width: `${Math.max(pct, 1.5)}%` }}
-                                                />
-                                            </div>
+                            {/* Y axis */}
+                            <div className="flex flex-col justify-between h-[calc(100%-3.5rem)] text-xs text-gray-500/70 font-medium z-10">
+                                {yLabels.map((percentage, i) => (
+                                    <span key={i}>{percentage}%</span>
+                                ))}
+                            </div>
+
+                            <div className="relative flex-1 flex flex-col h-full overflow-hidden">
+
+                                <div className="absolute top-0 left-0 right-0 h-[calc(100%-3.5rem)] flex flex-col justify-between pointer-events-none z-0">
+                                    {yLabels.map((val) => (
+                                        <div key={`grid-${val}`} className="w-full border-t border-gray-400/20 border-dashed" />
+                                    ))}
+                                </div>
+
+                                {/* Bars */}
+                                <div className="relative z-10 flex gap-8 overflow-x-auto h-full items-end pb-1 
+                                scrollbar-thin scrollbar-thumb-gray-300/50 scrollbar-track-transparent">
+
+                                    {sortedStates.length === 0 ? (
+                                        <div className="text-gray-400 font-mono text-sm w-full text-center self-center pb-16">
+                                            Zero states measured.
                                         </div>
-                                    );
-                                })
-                            )}
+                                    ) : (
+                                        sortedStates.map(([state, probability]) => {
+
+                                            const probPercent = (probability * 100).toFixed(1);
+
+                                            return (
+                                                <div key={state} className="flex flex-col items-center h-full shrink-0 group">
+
+                                                    <div className="w-10 h-[calc(100%-3.5rem)] bg-white/30 rounded-2xl overflow-hidden flex items-end shadow-inner border border-white/60 relative backdrop-blur-sm">
+
+                                                        <div
+                                                            className="bg-linear-to-t from-red-400/90 to-red-300/90 transition-all duration-700 ease-out w-full rounded-t-2xl
+                                                             shadow-sm group-hover:from-red-500/90 group-hover:to-red-400/90"
+                                                            style={{ height: `${probPercent}%` }}
+                                                        />
+
+                                                    </div>
+
+                                                    {/* X axis Probability */}
+                                                    <div className="flex flex-col items-center justify-start h-14 pt-3 gap-1">
+
+                                                        <span className="bg-gray-800/80 backdrop-blur-md text-white text-[10px] 
+                                                        px-2 py-0.5 rounded shadow-sm font-mono tracking-wider">
+                                                            |{state}⟩
+                                                        </span>
+
+                                                        <span className="flex flex-col items-center leading-tight">
+                                                            <span className="text-[10px] font-semibold text-gray-600/90">{probPercent}%</span>
+                                                            <span className="text-[9px] text-gray-400 font-normal">({probability})</span>
+                                                        </span>
+
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
-
                 </div>
 
-                <div className="py-3 px-6 bg-[#ddb551] border-t-4 border-black flex justify-between items-center">
-
-                    <a
-                        href="https://quantum.ibm.com/"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-xs font-black underline hover:text-blue-600 cursor-pointer"
-                    >
-                        Export to IBM Quantum Lab ↗
-                    </a>
-                </div>
             </div>
+        </div>
+    )
+}
+
+const StateNode = ({ position, color, probabilitySize }) => {
+    return (
+        <group>
+            <Line points={[[0, 0, 0], position]} color="gray" lineWidth={2} />
+
+            <Sphere args={[probabilitySize, 16, 16]} position={position}>
+                <meshStandardMaterial color={color} />
+            </Sphere>
+
+        </group>
+    );
+};
+
+
+const QSphere = () => {
+    
+
+    return (
+        <div className='bg-[#1e1e1e] relative flex-1 flex flex-col h-full m-2 rounded-4xl
+         shadow-[inset_0_4px_12px_rgba(0,0,0,0.9),0_8px_8px_-4px_rgba(0,0,0,0.7),0_2px_4px_rgba(255,255,255,0.03)] backdrop-blur-md'>
+
+            <Canvas camera={{ position: [0, 0, 5] }}>
+
+                <OrbitControls enableZoom={true} />
+                <ambientLight intensity={0.5} />
+                <pointLight position={[10, 100, 10]} intensity={1} />
+
+                <Sphere shadows args={[2, 33, 33]}>
+                    <meshBasicMaterial
+                        color="white"
+                        transparent
+                        opacity={0.05}
+                        wireframe
+                        clipShadows
+                    />
+                </Sphere>
+
+                <StateNode position={[0, 2, 0]} color="red" probabilitySize={0.1} />
+
+                <StateNode position={[1, 0, 2]} color="green" probabilitySize={0.15} />
+
+                <StateNode position={[2, 0, 0]} color="blue" probabilitySize={0.08} />
+
+            </Canvas>
 
         </div>
     )
 }
+
+
 
 export default ExecuteCircuit

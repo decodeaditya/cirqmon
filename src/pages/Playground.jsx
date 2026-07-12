@@ -1,17 +1,29 @@
-import React, { useState } from 'react'
-import Canvas from '../components/Canvas'
-import Button from '../components/Button'
-import QuantumGatesTray from '../components/QuantumGatesTray'
-import QubitsAdjust from '../tools/QubitsAdjust'
+import React, { useEffect, useState } from 'react'
+import Canvas from '../blocks/Canvas'
+import SidebarBtn from '../components/SidebarBtn'
+import GatesTray from '../blocks/GatesTray'
+import AdjustGrid from '../tools/AdjustGrid'
+
 import useSound from 'use-sound'
-import background1 from '../assets/canvas_backgrounds/background_1.jpg'
-import background2 from '../assets/canvas_backgrounds/background_2.jpg'
-import background3 from '../assets/canvas_backgrounds/background_3.jpg'
+
+import background1 from '../assets/canvas_backgrounds/bg1.jpg'
+import background2 from '../assets/canvas_backgrounds/bg2.jpg'
+import background3 from '../assets/canvas_backgrounds/bg3.jpg'
+
 import { DragDropProvider } from '@dnd-kit/react'
+
 import audio_url from "../assets/audio/background_audio.mp3"
 
+import { useNavigate } from 'react-router-dom'
+
+import musicIcon from '../assets/icons/music.webp'
+import sceneryIcon from '../assets/icons/scene.webp'
+import qubitsIcon from '../assets/icons/nuclei.webp'
+import homeIcon from '../assets/icons/home.webp'
 
 const Playground = () => {
+
+    const navigate = useNavigate()
 
     const backgrounds = [
         background1,
@@ -29,7 +41,7 @@ const Playground = () => {
         setBackground(backgrounds[(backgrounds.indexOf(background) + 1) % backgrounds.length]);
     };
 
-    const manageMusic = async() => {
+    const manageMusic = async () => {
         await setMusicPlaying(!musicPlaying);
 
         if (!musicPlaying) {
@@ -45,10 +57,10 @@ const Playground = () => {
 
 
     const buttons = [
-        { id: 1, text: 'Music', icon: '🎶', color: 'bg-[#FF5757]', onclick: manageMusic },
-        { id: 2, text: 'Snapshot', icon: '🎾', color: 'bg-[#FFDE59]', onclick: () => { } },
-        { id: 3, text: 'Scenery', icon: '🏡', color: 'bg-[#38B6FF]', onclick: changeBackground },
-        { id: 4, text: 'Qubits', icon: '🔬', color: 'bg-[#ECA18A]', onclick: toggleQubitsAdjust },
+        { id: 1, text: 'Home', icon: homeIcon, onclick: () => { navigate("/") } },
+        { id: 2, text: 'Music', icon: musicIcon, onclick: manageMusic },
+        { id: 3, text: 'Scenery', icon: sceneryIcon, onclick: changeBackground },
+        { id: 4, text: 'Qubits', icon: qubitsIcon, onclick: toggleQubitsAdjust },
     ]
 
     const [circuit, setCircuit] = useState({
@@ -70,10 +82,9 @@ const Playground = () => {
     const removeQubit = () => {
 
         const keys = Object.keys(circuit);
+        const qubitToRemove = Number(keys[keys.length - 1]);
 
         if (keys.length <= 1) return; // Must have at least 1 Qubit
-
-        const qubitToRemove = Number(keys[keys.length - 1]);
 
         setCircuit((oldCircuit) => {
             const copy = { ...oldCircuit };
@@ -91,7 +102,6 @@ const Playground = () => {
         for (const key in oldCircuit) {
             oldCircuit[key].push(null);
         }
-
         setCircuit(oldCircuit);
     }
 
@@ -108,6 +118,7 @@ const Playground = () => {
     }
 
     const handleDragEnd = (event) => {
+
         const { source, target } = event.operation;
 
         if (!source || !target) return;
@@ -121,8 +132,8 @@ const Playground = () => {
 
         setCircuit((prevCircuit) => {
             const nextCircuit = { ...prevCircuit };
-            nextCircuit[qubitId] = [...prevCircuit[qubitId]];
 
+            nextCircuit[qubitId] = [...prevCircuit[qubitId]];
             nextCircuit[qubitId][stepIdx] = gateId;
 
             return nextCircuit;
@@ -130,22 +141,29 @@ const Playground = () => {
     };
 
     const removeGate = (qubitId, stepId) => {
+
         setCircuit((prevCircuit) => {
+
             const nextCircuit = { ...prevCircuit };
+
             nextCircuit[qubitId] = [...prevCircuit[qubitId]];
             nextCircuit[qubitId][stepId] = null;
+
             return nextCircuit;
         });
+
+
     };
 
     return (
         <DragDropProvider onDragEnd={handleDragEnd}>
 
-            <div style={{ backgroundImage: `url(${background})` }} className={`bg-cover bg-center bg-no-repeat w-screen h-screen flex items-center justify-center p-6 relative transition-all duration-500`}>
+            <div style={{ backgroundImage: `url(${background})` }} className={`bg-cover bg-center bg-fixed bg-no-repeat w-screen
+                 h-screen items-center justify-center p-6 relative transition-all duration-500 flex flex-col sm:flex-row`}>
 
-                <QuantumGatesTray />
+                <GatesTray />
 
-                <Canvas height="80%" width="3/4" circuit={circuit} setCircuit={setCircuit} removeGate={removeGate}/>
+                <Canvas height="80%" width="3/4" circuit={circuit} setCircuit={setCircuit} removeGate={removeGate} />
 
                 <Sidebar buttons={buttons} />
 
@@ -160,7 +178,12 @@ const Playground = () => {
                     removeNode={removeCircuitNode}
                 />
 
+            </div>
 
+
+            <div className="bg-yellow-300 rounded-3xl fixed bottom-10 left-8  px-6 py-2 cursor-pointer transition-all
+             duration-150 shadow-[0_4px_0_0_#B8860B,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:scale(1.5)">
+                <span className="text-xl font-bold text-slate-900 ">CIRQMON</span>
             </div>
 
         </DragDropProvider>
@@ -170,9 +193,9 @@ const Playground = () => {
 
 const Sidebar = ({ buttons }) => {
     return (
-        <div className="flex flex-col gap-4 justify-center w-[1/8] bg-white/40 backdrop-blur-md border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] p-6">
+        <div className="gap-4 justify-center bg-white/10 backdrop-blur-3xl border-2 border-black/50 shadow-md/70 p-6 flex sm:w-max sm:flex-col rounded-r-[50px]">
             {buttons.map((btn) => (
-                <Button key={btn.id} btn={btn} onClick={btn.onclick} />
+                <SidebarBtn key={btn.id} btn={btn} onClick={btn.onclick} />
             ))}
         </div>
     )
@@ -191,11 +214,11 @@ const QubitsAdjustSection = ({ qCount, nCount, isOpen, onClose, addQubit, remove
 
             <div
                 className={`
-          pointer-events-auto mb-4 w-64 bg-[#FFF8F0] border-4 border-black rounded-3xl p-4 shadow-[8px_8px_0px_0px_#000] flex flex-col gap-4 transition-all duration-150 origin-bottom
+          pointer-events-auto mb-4 w-64 bg-white/40 backdrop-blur-3xl rounded-3xl p-4 shadow-[5px_5px_0px_0px_#000] flex flex-col gap-4 transition-all duration-150 origin-bottom
           ${isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-75 translate-y-8 pointer-events-none'}
         `}
             >
-                <QubitsAdjust qCount={qCount} nCount={nCount} addQubit={addQubit} removeQubit={removeQubit} addNode={addNode} removeNode={removeNode} />
+                <AdjustGrid qCount={qCount} nCount={nCount} addQubit={addQubit} removeQubit={removeQubit} addNode={addNode} removeNode={removeNode} />
             </div>
         </div>
     )

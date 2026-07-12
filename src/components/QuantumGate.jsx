@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDraggable } from '@dnd-kit/react';
 
-const GatesButton = ({ g, handleDragStart, gateClicked }) => {
+const QuantumGate = ({ g, handleDragStart, gateClicked }) => {
 
     const { ref, listeners, attributes } = useDraggable({
         id: g.id,
@@ -13,16 +13,15 @@ const GatesButton = ({ g, handleDragStart, gateClicked }) => {
             onClick={(e) => gateClicked(e, g.id)}
             ref={ref} {...listeners} {...attributes}
             className={`
-              group/gate relative shrink-0
+              group/gate relative
               w-12 h-12 sm:w-14 sm:h-14
-              ${g.bg} ${g.text} 
-              border-2 sm:border-3 border-black rounded-xl sm:rounded-2xl 
-              shadow-[2px_2px_0px_0px_#000] 
+              ${g.bg} ${g.text} rounded-2xl
+              shadow-md/100
               hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#000] hover:rotate-3
               active:translate-x-0.5 active:translate-y-0.5 active:shadow-none active:rotate-0
               transition-all duration-100 
               flex flex-col items-center justify-center 
-              cursor-grab active:cursor-grabbing
+              cursor-grab active:cursor-grabbing mt-2
             `}
         >
             <span className="font-black text-xl sm:text-2xl leading-none pointer-events-none">{g.name}</span>
@@ -31,4 +30,4 @@ const GatesButton = ({ g, handleDragStart, gateClicked }) => {
     )
 }
 
-export default GatesButton
+export default QuantumGate
