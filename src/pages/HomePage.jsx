@@ -165,12 +165,12 @@ export default function Homepage() {
 
                     <div className="flex gap-4">
 
-                            <a href="https://github.com/decodeaditya/cirqmon" target="_blank" rel="noreferrer" className="text-slate-900 bg-yellow-300 font-black px-6 py-3 rounded-4xl border-3 border-slate-900 transition-all duration-150 shadow-[0_4px_0_0_#B8860B,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#B8860B,0_8px_0_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_0_#B8860B,0_0px_0_0_#0f172a]">
+                        <a href="https://github.com/decodeaditya/cirqmon" target="_blank" rel="noreferrer" className="text-slate-900 bg-yellow-300 font-black px-6 py-3 rounded-4xl border-3 border-slate-900 transition-all duration-150 shadow-[0_4px_0_0_#B8860B,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#B8860B,0_8px_0_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_0_#B8860B,0_0px_0_0_#0f172a]">
                             Github
                         </a>
 
-                        <a href="https://yourwebsite.com" target="_blank" rel="noreferrer" className="text-slate-900 bg-yellow-300 font-black px-6 py-3 rounded-xl border-3 border-slate-900 transition-all duration-150 shadow-[0_4px_0_0_#B8860B,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#B8860B,0_8px_0_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_0_#B8860B,0_0px_0_0_#0f172a]">
-                            On Hack Club 
+                        <a href="https://stardance.hackclub.com/projects/1327" target="_blank" rel="noreferrer" className="text-slate-900 bg-yellow-300 font-black px-6 py-3 rounded-xl border-3 border-slate-900 transition-all duration-150 shadow-[0_4px_0_0_#B8860B,0_6px_0_0_#0f172a] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#B8860B,0_8px_0_0_#0f172a] active:translate-y-1 active:shadow-[0_0px_0_0_#B8860B,0_0px_0_0_#0f172a]">
+                            On Hack Club
                         </a>
 
                     </div>

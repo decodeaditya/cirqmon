@@ -1,6 +1,11 @@
-# Cirqmon
+![Alien](./src/assets/icons/alienFace.webp)
 
-## Build Quantum Circuits without feeling being Overwhelmed.
+# Welcome to Cirqmon
+A Web based Quantum circuit maker, whose simulator and circuit execution happens inside browser without any backend, Execution is written from Scratch. Also its more colorful and 3d, So a lot better in design too!
 
-If you've ever felt that quantum computing is too complex, too expensive, or too intimidating, you're not alone. Cirqmon is here to change that. You will build Circuits while feeling warmth of Japanese Manga. Wait for it, Contribute to the project and be part of a community.
+![A Snapshot](./public/PlaygroundSnapshot.png)
 
+---
+
+## Better Readme coming Soon.
+Which will include - Maths, Tools and other details.Since I am still working on Execution part, You can check current progress of project meanwhile on URL.
