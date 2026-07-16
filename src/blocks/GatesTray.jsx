@@ -17,7 +17,7 @@ const GatesTray = () => {
         setInspectedGate(gate);
     }
 
-    const onCloseLore = () => {
+    const onCloseGateWiki = () => {
         setInspectedGate(null);
     }
 
@@ -57,7 +57,7 @@ const GatesTray = () => {
 
             </div>
 
-            <GatesInfo inspectedGate={inspectedGate} onCloseLore={onCloseLore} />
+            <GatesInfo inspectedGate={inspectedGate} onCloseGateWiki={onCloseGateWiki} />
 
         </>
     );
